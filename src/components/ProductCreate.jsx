@@ -4,10 +4,11 @@ import { useState } from 'react';
 function ProductCreate() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const sellerId = searchParams.get('sellerId');
+  const initialSellerId = searchParams.get('sellerId');
 
   const [form, setForm] = useState({
-    name: ''
+    name: '',
+    sellerId: initialSellerId || ''
   });
 
   const handleChange = (e) => {
@@ -18,7 +19,7 @@ function ProductCreate() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = { ...form, sellerId: Number(sellerId) };
+    const payload = { name: form.name, sellerId: Number(form.sellerId) };
 
     const res = await fetch('/api/products', {
       method: 'POST',
@@ -28,7 +29,7 @@ function ProductCreate() {
 
     if (res.ok) {
       alert('Product created.');
-      navigate(`/sellers/${sellerId}`);
+      navigate(`/sellers/${form.sellerId}`);
     } else {
       alert('Failed to create product.');
     }
@@ -42,6 +43,19 @@ function ProductCreate() {
           Name:
           <input name="name" value={form.name} onChange={handleChange} required />
         </label><br />
+
+        {!initialSellerId && (
+          <label>
+            Seller ID:
+            <input
+              name="sellerId"
+              type="number"
+              value={form.sellerId}
+              onChange={handleChange}
+              required
+            />
+          </label>
+        )}<br />
 
         <button type="submit">Create</button>
       </form>

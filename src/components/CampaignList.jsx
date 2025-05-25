@@ -12,14 +12,14 @@ function CampaignList() {
         setCampaigns(data);
       })
       .catch(err => console.error(err));
-  }, []);  // empty dependency array = run once when component mounts
+  }, []);  
 
   return (
     <div>
       <h1>All Campaigns</h1>
       <ul>
         {campaigns.map(c => (
-          <li key={c.id}><Link to={`/campaigns/${c.id}`}>{c.name} </Link> - status:{c.status ? 'On' : 'Off'} (for product id: {c.productName})</li>
+          <li key={c.id}><Link to={`/campaigns/${c.id}`}>{c.name} </Link> - status:{c.status ? 'On' : 'Off'} (for product: {c.productName} id: {c.productId})</li>
         ))}
       </ul>
     </div>

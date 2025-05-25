@@ -73,8 +73,7 @@ function SellerDetail() {
               <Link to={`/products/${p.id}`}>{p.name}</Link>{' '}
               <button
                 onClick={() => handleDeleteProduct(p.id)}
-                style={{ marginLeft: '10px' }}
-              >
+                style={{ marginLeft: '10px' }}>
                 Delete Product
               </button>
             </li>
@@ -88,6 +87,13 @@ function SellerDetail() {
           style={{ marginRight: '10px' }}
         >
           Add Product
+        </button>
+
+        <button
+          onClick={() => navigate(`/sellers/${id}/edit`)}
+          style={{ marginRight: '10px' }}
+        >
+          Edit {seller.name}
         </button>
 
         <button onClick={handleDeleteSeller}>

@@ -1,6 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
+const towns = ['Kraków', 'Warsaw', 'Gdańsk', 'Wrocław', 'Poznań'];
+const keywordSuggestions = ['eco', 'handmade', 'natural', 'gift', 'luxury', 'premium', 'exclusive', 'kids', 'toys', 'fun', 'colorful', 'home', 'decor', 'minimal', 'style', 'organic', 'vegan', 'wellness', 'care'];
+
 function CampaignCreate() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -9,6 +12,7 @@ function CampaignCreate() {
   const productId = productIdFromQuery ? parseInt(productIdFromQuery, 10) : null;
 
   const [products, setProducts] = useState([]);
+  const [keywordInput, setKeywordInput] = useState('');
   const [form, setForm] = useState({
     name: '',
     bidAmount: 0,
@@ -21,7 +25,6 @@ function CampaignCreate() {
   });
 
   useEffect(() => {
-    // If no productId in URL, fetch products for user to select
     if (!productId) {
       fetch('/api/products')
         .then(res => res.json())
@@ -36,19 +39,38 @@ function CampaignCreate() {
     setForm(prev => ({ ...prev, [name]: val }));
   };
 
-  const handleKeywordsChange = (e) => {
+  const handleKeywordInputChange = (e) => {
+    setKeywordInput(e.target.value);
+  };
+
+  const handleKeywordKeyDown = (e) => {
+    if ((e.key === 'Enter' || e.key === ',') && keywordInput.trim()) {
+      e.preventDefault();
+      const keyword = keywordInput.trim();
+      if (!form.keywords.includes(keyword)) {
+        setForm(prev => ({ ...prev, keywords: [...prev.keywords, keyword] }));
+      }
+      setKeywordInput('');
+    }
+  };
+
+  const handleRemoveKeyword = (keyword) => {
     setForm(prev => ({
       ...prev,
-      keywords: e.target.value.split(',').map(k => k.trim()).filter(k => k !== '')
+      keywords: prev.keywords.filter(k => k !== keyword)
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // If productId is zero or not set, prevent submission
     if (!form.productId) {
       alert('Please select a product.');
+      return;
+    }
+
+    if (form.keywords.length === 0) {
+      alert('Please add at least one keyword.');
       return;
     }
 
@@ -57,8 +79,7 @@ function CampaignCreate() {
       bidAmount: parseFloat(form.bidAmount),
       fund: parseFloat(form.fund),
       radiusKm: parseFloat(form.radiusKm),
-      status: form.status ? 1 : 0,
-      productId: form.productId
+      status: form.status ? 1 : 0
     };
 
     console.log('Sending payload:', JSON.stringify(payload));
@@ -72,6 +93,7 @@ function CampaignCreate() {
     if (res.ok) {
       alert('Campaign created.');
       navigate(`/products/${form.productId}`);
+      window.location.reload();
     } else {
       alert('Failed to create campaign.');
     }
@@ -81,7 +103,6 @@ function CampaignCreate() {
     <div>
       <h2>Create New Campaign</h2>
 
-      {/* Show product selector only if productId not provided */}
       {!productId && (
         <label>
           Select Product:
@@ -124,7 +145,19 @@ function CampaignCreate() {
 
         <label>
           Town:
-          <input name="town" value={form.town} onChange={handleChange} required />
+          <select
+            name="town"
+            value={form.town}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Select town --</option>
+            {towns.map((town) => (
+              <option key={town} value={town}>
+                {town}
+              </option>
+            ))}
+          </select>
         </label><br />
 
         <label>
@@ -133,11 +166,30 @@ function CampaignCreate() {
         </label><br />
 
         <label>
-          Keywords (comma separated):
-          <input value={form.keywords.join(', ')} onChange={handleKeywordsChange} />
-        </label><br />
+          Keywords (press Enter or Comma to add):
+          <input
+            list="keyword-suggestions"
+            value={keywordInput}
+            onChange={handleKeywordInputChange}
+            onKeyDown={handleKeywordKeyDown}
+            placeholder="Type and press Enter"
+            required={form.keywords.length === 0}
+          />
+          <datalist id="keyword-suggestions">
+            {keywordSuggestions.map(k => (
+              <option key={k} value={k} />
+            ))}
+          </datalist>
+        </label>
 
-        {/* If productId exists from query, keep it hidden */}
+        <div>
+          {form.keywords.map(k => (
+            <span key={k} style={{ marginRight: '8px' }}>
+              {k} <button type="button" onClick={() => handleRemoveKeyword(k)}>x</button>
+            </span>
+          ))}
+        </div><br />
+
         {productId && (
           <input type="hidden" name="productId" value={form.productId} />
         )}

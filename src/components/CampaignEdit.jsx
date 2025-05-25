@@ -1,9 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
+const towns = ['Kraków', 'Warsaw', 'Gdańsk', 'Wrocław', 'Poznań'];
+const keywordSuggestions = ['eco', 'handmade', 'natural', 'gift', 'luxury', 'premium', 'exclusive', 'kids', 'toys', 'fun', 'colorful', 'home', 'decor', 'minimal', 'style', 'organic', 'vegan', 'wellness', 'care'];
+
 function CampaignEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: '',
     bidAmount: 0,
@@ -15,35 +19,56 @@ function CampaignEdit() {
     keywords: []
   });
 
+  const [keywordInput, setKeywordInput] = useState('');
+
   useEffect(() => {
     fetch(`/api/campaigns/${id}`)
       .then(res => res.json())
-      .then(data => setForm({ ...data, keywords: data.keywords || [] }));
-    }, [id]);
-    
+      .then(data => setForm({ ...data, keywords: data.keywords || [] }))
+      .catch(console.error);
+  }, [id]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : value;
     setForm(prev => ({ ...prev, [name]: val }));
   };
 
-  const handleKeywordsChange = (e) => {
-    setForm(prev => ({ ...prev, keywords: e.target.value.split(',').map(k => k.trim()) }));
+  const handleKeywordInputChange = (e) => {
+    setKeywordInput(e.target.value);
+  };
+
+  const handleKeywordKeyDown = (e) => {
+    if ((e.key === 'Enter' || e.key === ',') && keywordInput.trim()) {
+      e.preventDefault();
+      const keyword = keywordInput.trim();
+      if (!form.keywords.includes(keyword)) {
+        setForm(prev => ({ ...prev, keywords: [...prev.keywords, keyword] }));
+      }
+      setKeywordInput('');
+    }
+  };
+
+  const handleRemoveKeyword = (keyword) => {
+    setForm(prev => ({
+      ...prev,
+      keywords: prev.keywords.filter(k => k !== keyword)
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const payload = {
-    ...form,
-    bidAmount: Number(form.bidAmount),
-    fund: Number(form.fund),
-    radiusKm: Number(form.radiusKm),
-    status: form.status ? 1 : 0,
-    productId: form.productId
-  };
 
-  console.log('Sending payload:', JSON.stringify(payload));
+    const payload = {
+      ...form,
+      bidAmount: Number(form.bidAmount),
+      fund: Number(form.fund),
+      radiusKm: Number(form.radiusKm),
+      status: form.status ? 1 : 0,
+      productId: Number(form.productId)
+    };
+
+    console.log('Sending payload:', JSON.stringify(payload));
 
     const res = await fetch(`/api/campaigns/${id}`, {
       method: 'PUT',
@@ -54,6 +79,7 @@ function CampaignEdit() {
     if (res.ok) {
       alert('Campaign updated.');
       navigate(`/campaigns/${id}`);
+      window.location.reload();
     } else {
       alert('Failed to update campaign.');
     }
@@ -85,7 +111,12 @@ function CampaignEdit() {
 
         <label>
           Town:
-          <input name="town" value={form.town} onChange={handleChange} required />
+          <select name="town" value={form.town} onChange={handleChange} required>
+            <option value="">-- Select town --</option>
+            {towns.map(town => (
+              <option key={town} value={town}>{town}</option>
+            ))}
+          </select>
         </label><br />
 
         <label>
@@ -94,14 +125,34 @@ function CampaignEdit() {
         </label><br />
 
         <label>
-          Product ID (if you want to move campaign to another product):
+          Product ID:
           <input name="productId" type="number" value={form.productId} onChange={handleChange} required />
         </label><br />
 
         <label>
-          Keywords (comma separated):
-          <input value={form.keywords.join(', ')} onChange={handleKeywordsChange} />
-        </label><br />
+          Keywords (press Enter or Comma to add):
+          <input
+            list="keyword-suggestions"
+            value={keywordInput}
+            onChange={handleKeywordInputChange}
+            onKeyDown={handleKeywordKeyDown}
+            placeholder="Type and press Enter"
+          />
+          <datalist id="keyword-suggestions">
+            {keywordSuggestions.map(k => (
+              <option key={k} value={k} />
+            ))}
+          </datalist>
+        </label>
+
+        {/* Display current keywords */}
+        <div style={{ marginTop: '8px' }}>
+          {form.keywords.map(k => (
+            <span key={k} style={{ marginRight: '8px' }}>
+              {k} <button type="button" onClick={() => handleRemoveKeyword(k)}>x</button>
+            </span>
+          ))}
+        </div><br />
 
         <button type="submit">Save Changes</button>
       </form>

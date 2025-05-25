@@ -13,6 +13,7 @@ import SellerCreate from './components/SellerCreate';
 import ProductCreate from './components/ProductCreate';
 import CampaignCreate from './components/CampaignCreate';
 import ProductEdit from './components/ProductEdit';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/sellers/:id/edit" element={<SellerEdit />} />
         <Route path="/products/edit/:id" element={<ProductEdit />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }

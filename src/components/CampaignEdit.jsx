@@ -81,19 +81,19 @@ function CampaignEdit() {
       navigate(`/campaigns/${id}`);
       window.location.reload();
     } else {
-        const errorData = await res.json();
-    
-  const extractedErrors = [];
-  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
-      for (const field in errorData.errors) {
-        extractedErrors.push(...errorData.errors[field]);
-      }
-    }
-    setErrorMessages(extractedErrors);
+      const errorData = await res.json();
 
-    if (errorData.errors && Array.isArray(errorData.errors)) {
-  setErrorMessages(errorData.errors);
-}
+      const extractedErrors = [];
+      if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+        for (const field in errorData.errors) {
+          extractedErrors.push(...errorData.errors[field]);
+        }
+      }
+      setErrorMessages(extractedErrors);
+
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        setErrorMessages(errorData.errors);
+      }
       //alert('Failed to update campaign.');
     }
   };
@@ -102,15 +102,15 @@ function CampaignEdit() {
     <div>
       <h2>Edit Campaign</h2>
 
-{errorMessages.length > 0 && (
-  <div style={{ color: 'red' }}>
-    <ul>
-      {errorMessages.map((msg, index) => (
-        <li key={index}>{msg}</li>
-      ))}
-    </ul>
-  </div>
-)}
+      {errorMessages.length > 0 && (
+        <div style={{ color: 'red' }}>
+          <ul>
+            {errorMessages.map((msg, index) => (
+              <li key={index}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <label>

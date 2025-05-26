@@ -6,7 +6,7 @@ function SellerEdit() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [emeraldBalance, setEmeraldBalance] = useState(0);
-const [errorMessages, setErrorMessages] = useState([]);
+  const [errorMessages, setErrorMessages] = useState([]);
   useEffect(() => {
     // Load current seller data
     fetch(`/api/sellers/${id}`)
@@ -44,18 +44,18 @@ const [errorMessages, setErrorMessages] = useState([]);
       window.location.reload();
     } else {
       const errorData = await response.json();
-    
-  const extractedErrors = [];
-  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
-      for (const field in errorData.errors) {
-        extractedErrors.push(...errorData.errors[field]);
-      }
-    }
-    setErrorMessages(extractedErrors);
 
-    if (errorData.errors && Array.isArray(errorData.errors)) {
-  setErrorMessages(errorData.errors);
-}
+      const extractedErrors = [];
+      if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+        for (const field in errorData.errors) {
+          extractedErrors.push(...errorData.errors[field]);
+        }
+      }
+      setErrorMessages(extractedErrors);
+
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        setErrorMessages(errorData.errors);
+      }
       //alert('Failed to update seller.');
     }
   };
@@ -64,15 +64,15 @@ const [errorMessages, setErrorMessages] = useState([]);
     <div>
       <h2>Edit Seller</h2>
 
-{errorMessages.length > 0 && (
-  <div style={{ color: 'red' }}>
-    <ul>
-      {errorMessages.map((msg, index) => (
-        <li key={index}>{msg}</li>
-      ))}
-    </ul>
-  </div>
-)}
+      {errorMessages.length > 0 && (
+        <div style={{ color: 'red' }}>
+          <ul>
+            {errorMessages.map((msg, index) => (
+              <li key={index}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <label>

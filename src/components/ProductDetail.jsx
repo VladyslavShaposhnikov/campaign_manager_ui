@@ -20,7 +20,7 @@ function ProductDetail() {
       .then(setCampaigns);
   };
 
-    // Delete product handler
+  // Delete product handler
   const handleDeleteProduct = async (productId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (!confirmDelete) return;
@@ -61,16 +61,16 @@ function ProductDetail() {
           <button>Edit Product</button>
         </Link>
         <button
-        onClick={() => handleDeleteProduct(product.id)}
-        style={{ marginLeft: '10px' }}>
-        Delete Product
+          onClick={() => handleDeleteProduct(product.id)}
+          style={{ marginLeft: '10px' }}>
+          Delete Product
         </button>
       </div>
 
       <h3>Campaigns for this product:</h3>
       <Link to={`/campaign/create?productId=${product.id}`} style={{ marginLeft: '10px' }}>
-          <button>Add Campaign</button>
-        </Link>
+        <button>Add Campaign</button>
+      </Link>
       {campaigns.length === 0 ? (
         <p>No campaigns found.</p>
       ) : (

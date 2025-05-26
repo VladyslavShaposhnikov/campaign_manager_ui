@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 function SellerCreate() {
   const [name, setName] = useState('');
-  const [emeraldBalance, setEmeraldBalance] = useState(0); 
+  const [emeraldBalance, setEmeraldBalance] = useState(0);
   const navigate = useNavigate();
-const [errorMessages, setErrorMessages] = useState([]);
+  const [errorMessages, setErrorMessages] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -21,18 +21,18 @@ const [errorMessages, setErrorMessages] = useState([]);
       window.location.reload();
     } else {
       const errorData = await response.json();
-    
-  const extractedErrors = [];
-  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
-      for (const field in errorData.errors) {
-        extractedErrors.push(...errorData.errors[field]);
-      }
-    }
-    setErrorMessages(extractedErrors);
 
-    if (errorData.errors && Array.isArray(errorData.errors)) {
-  setErrorMessages(errorData.errors);
-}
+      const extractedErrors = [];
+      if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+        for (const field in errorData.errors) {
+          extractedErrors.push(...errorData.errors[field]);
+        }
+      }
+      setErrorMessages(extractedErrors);
+
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        setErrorMessages(errorData.errors);
+      }
       //alert('Failed to create seller.');
     }
   };
@@ -41,23 +41,23 @@ const [errorMessages, setErrorMessages] = useState([]);
     <div>
       <h2>Create New Seller</h2>
 
-{errorMessages.length > 0 && (
-  <div style={{ color: 'red' }}>
-    <ul>
-      {errorMessages.map((msg, index) => (
-        <li key={index}>{msg}</li>
-      ))}
-    </ul>
-  </div>
-)}
+      {errorMessages.length > 0 && (
+        <div style={{ color: 'red' }}>
+          <ul>
+            {errorMessages.map((msg, index) => (
+              <li key={index}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <label>
           Name:
-          <input 
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            required 
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
             minLength={3}
             placeholder='3-100 characters'
           />
@@ -65,7 +65,7 @@ const [errorMessages, setErrorMessages] = useState([]);
         <br />
         <label>
           Emerald Balance:
-          <input 
+          <input
             type="number"
             onChange={(e) => setEmeraldBalance(e.target.value)}
             required

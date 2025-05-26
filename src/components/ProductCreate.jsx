@@ -5,7 +5,7 @@ function ProductCreate() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialSellerId = searchParams.get('sellerId');
-const [errorMessages, setErrorMessages] = useState([]);
+  const [errorMessages, setErrorMessages] = useState([]);
   const [form, setForm] = useState({
     name: '',
     sellerId: initialSellerId || ''
@@ -32,18 +32,18 @@ const [errorMessages, setErrorMessages] = useState([]);
       navigate(`/sellers/${form.sellerId}`);
     } else {
       const errorData = await res.json();
-    
-  const extractedErrors = [];
-  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
-      for (const field in errorData.errors) {
-        extractedErrors.push(...errorData.errors[field]);
-      }
-    }
-    setErrorMessages(extractedErrors);
 
-    if (errorData.errors && Array.isArray(errorData.errors)) {
-  setErrorMessages(errorData.errors);
-}
+      const extractedErrors = [];
+      if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+        for (const field in errorData.errors) {
+          extractedErrors.push(...errorData.errors[field]);
+        }
+      }
+      setErrorMessages(extractedErrors);
+
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        setErrorMessages(errorData.errors);
+      }
       alert('Failed to create product.');
     }
   };
@@ -53,14 +53,14 @@ const [errorMessages, setErrorMessages] = useState([]);
       <h2>Create Product</h2>
 
       {errorMessages.length > 0 && (
-  <div style={{ color: 'red' }}>
-    <ul>
-      {errorMessages.map((msg, index) => (
-        <li key={index}>{msg}</li>
-      ))}
-    </ul>
-  </div>
-)}
+        <div style={{ color: 'red' }}>
+          <ul>
+            {errorMessages.map((msg, index) => (
+              <li key={index}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <label>

@@ -98,19 +98,19 @@ function CampaignCreate() {
       window.location.reload();
     } else {
       const errorData = await res.json();
-    
-  const extractedErrors = [];
-  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
-      for (const field in errorData.errors) {
-        extractedErrors.push(...errorData.errors[field]);
-      }
-    }
-    setErrorMessages(extractedErrors);
 
-    if (errorData.errors && Array.isArray(errorData.errors)) {
-  setErrorMessages(errorData.errors);
-}
-       //alert('Failed to create campaign.');
+      const extractedErrors = [];
+      if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+        for (const field in errorData.errors) {
+          extractedErrors.push(...errorData.errors[field]);
+        }
+      }
+      setErrorMessages(extractedErrors);
+
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        setErrorMessages(errorData.errors);
+      }
+      //alert('Failed to create campaign.');
     }
   };
 
@@ -119,14 +119,14 @@ function CampaignCreate() {
       <h2>Create New Campaign</h2>
 
       {errorMessages.length > 0 && (
-  <div style={{ color: 'red' }}>
-    <ul>
-      {errorMessages.map((msg, index) => (
-        <li key={index}>{msg}</li>
-      ))}
-    </ul>
-  </div>
-)}
+        <div style={{ color: 'red' }}>
+          <ul>
+            {errorMessages.map((msg, index) => (
+              <li key={index}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {!productId && (
         <label>
@@ -155,7 +155,7 @@ function CampaignCreate() {
 
         <label>
           Bid Amount:
-          <input name="bidAmount" type="number" onChange={handleChange} required step="0.01"/>
+          <input name="bidAmount" type="number" onChange={handleChange} required step="0.01" />
         </label><br />
 
         <label>

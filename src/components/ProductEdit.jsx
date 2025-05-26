@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 function ProductEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
-const [errorMessages, setErrorMessages] = useState([]);
+  const [errorMessages, setErrorMessages] = useState([]);
   const [form, setForm] = useState({
     name: '',
     sellerId: ''
@@ -39,21 +39,21 @@ const [errorMessages, setErrorMessages] = useState([]);
 
     if (res.ok) {
       alert('Product updated.');
-      navigate(`/products/${id}`); 
+      navigate(`/products/${id}`);
     } else {
       const errorData = await res.json();
-    
-  const extractedErrors = [];
-  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
-      for (const field in errorData.errors) {
-        extractedErrors.push(...errorData.errors[field]);
-      }
-    }
-    setErrorMessages(extractedErrors);
 
-    if (errorData.errors && Array.isArray(errorData.errors)) {
-  setErrorMessages(errorData.errors);
-}
+      const extractedErrors = [];
+      if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+        for (const field in errorData.errors) {
+          extractedErrors.push(...errorData.errors[field]);
+        }
+      }
+      setErrorMessages(extractedErrors);
+
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        setErrorMessages(errorData.errors);
+      }
       //alert('Failed to update product.');
     }
   };
@@ -62,15 +62,15 @@ const [errorMessages, setErrorMessages] = useState([]);
     <div>
       <h2>Edit Product</h2>
 
-{errorMessages.length > 0 && (
-  <div style={{ color: 'red' }}>
-    <ul>
-      {errorMessages.map((msg, index) => (
-        <li key={index}>{msg}</li>
-      ))}
-    </ul>
-  </div>
-)}
+      {errorMessages.length > 0 && (
+        <div style={{ color: 'red' }}>
+          <ul>
+            {errorMessages.map((msg, index) => (
+              <li key={index}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <label>
@@ -79,9 +79,9 @@ const [errorMessages, setErrorMessages] = useState([]);
         </label><br />
 
         <input
-        name="sellerId"
-        type="hidden"
-        value={form.sellerId}
+          name="sellerId"
+          type="hidden"
+          value={form.sellerId}
         />
 
         <button type="submit">Save</button>

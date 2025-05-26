@@ -12,7 +12,7 @@ function CampaignList() {
         setCampaigns(data);
       })
       .catch(err => console.error(err));
-  }, []);  
+  }, []);
 
   return (
     <div>

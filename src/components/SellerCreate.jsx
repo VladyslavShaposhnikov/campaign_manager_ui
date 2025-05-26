@@ -5,7 +5,7 @@ function SellerCreate() {
   const [name, setName] = useState('');
   const [emeraldBalance, setEmeraldBalance] = useState(0); 
   const navigate = useNavigate();
-
+const [errorMessages, setErrorMessages] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,13 +20,37 @@ function SellerCreate() {
       navigate('/sellers');
       window.location.reload();
     } else {
-      alert('Failed to create seller.');
+      const errorData = await response.json();
+    
+  const extractedErrors = [];
+  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+      for (const field in errorData.errors) {
+        extractedErrors.push(...errorData.errors[field]);
+      }
+    }
+    setErrorMessages(extractedErrors);
+
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+  setErrorMessages(errorData.errors);
+}
+      //alert('Failed to create seller.');
     }
   };
 
   return (
     <div>
       <h2>Create New Seller</h2>
+
+{errorMessages.length > 0 && (
+  <div style={{ color: 'red' }}>
+    <ul>
+      {errorMessages.map((msg, index) => (
+        <li key={index}>{msg}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
       <form onSubmit={handleSubmit}>
         <label>
           Name:
@@ -34,6 +58,8 @@ function SellerCreate() {
             value={name} 
             onChange={(e) => setName(e.target.value)} 
             required 
+            minLength={3}
+            placeholder='3-100 characters'
           />
         </label>
         <br />
@@ -41,7 +67,6 @@ function SellerCreate() {
           Emerald Balance:
           <input 
             type="number"
-            value={emeraldBalance}
             onChange={(e) => setEmeraldBalance(e.target.value)}
             required
             min="0"

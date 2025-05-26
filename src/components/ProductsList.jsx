@@ -16,7 +16,7 @@ function ProductsList() {
       <ul>
         {products.map(product => (
           <li key={product.id}>
-            <Link to={`/products/${product.id}`}>{product.name} (Id: {product.id})</Link>
+            <Link to={`/products/${product.id}`}>{product.name}</Link> (Seller Name: {product.sellerName}, Seller Id: {product.id},)
           </li>
         ))}
       </ul>

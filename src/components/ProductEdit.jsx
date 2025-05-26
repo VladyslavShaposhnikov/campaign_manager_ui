@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 function ProductEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+const [errorMessages, setErrorMessages] = useState([]);
   const [form, setForm] = useState({
     name: '',
     sellerId: ''
@@ -41,17 +41,41 @@ function ProductEdit() {
       alert('Product updated.');
       navigate(`/products/${id}`); 
     } else {
-      alert('Failed to update product.');
+      const errorData = await res.json();
+    
+  const extractedErrors = [];
+  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+      for (const field in errorData.errors) {
+        extractedErrors.push(...errorData.errors[field]);
+      }
+    }
+    setErrorMessages(extractedErrors);
+
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+  setErrorMessages(errorData.errors);
+}
+      //alert('Failed to update product.');
     }
   };
 
   return (
     <div>
       <h2>Edit Product</h2>
+
+{errorMessages.length > 0 && (
+  <div style={{ color: 'red' }}>
+    <ul>
+      {errorMessages.map((msg, index) => (
+        <li key={index}>{msg}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
       <form onSubmit={handleSubmit}>
         <label>
           Name:
-          <input name="name" value={form.name} onChange={handleChange} required />
+          <input name="name" value={form.name} onChange={handleChange} required placeholder='3-100 characters' minLength={3} maxLength={100} />
         </label><br />
 
         <input

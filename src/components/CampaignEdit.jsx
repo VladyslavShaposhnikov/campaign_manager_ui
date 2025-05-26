@@ -7,7 +7,7 @@ const keywordSuggestions = ['eco', 'handmade', 'natural', 'gift', 'luxury', 'pre
 function CampaignEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [errorMessages, setErrorMessages] = useState([]);
   const [form, setForm] = useState({
     name: '',
     bidAmount: 0,
@@ -81,13 +81,37 @@ function CampaignEdit() {
       navigate(`/campaigns/${id}`);
       window.location.reload();
     } else {
-      alert('Failed to update campaign.');
+        const errorData = await res.json();
+    
+  const extractedErrors = [];
+  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+      for (const field in errorData.errors) {
+        extractedErrors.push(...errorData.errors[field]);
+      }
+    }
+    setErrorMessages(extractedErrors);
+
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+  setErrorMessages(errorData.errors);
+}
+      //alert('Failed to update campaign.');
     }
   };
 
   return (
     <div>
       <h2>Edit Campaign</h2>
+
+{errorMessages.length > 0 && (
+  <div style={{ color: 'red' }}>
+    <ul>
+      {errorMessages.map((msg, index) => (
+        <li key={index}>{msg}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
       <form onSubmit={handleSubmit}>
         <label>
           Name:
@@ -96,12 +120,12 @@ function CampaignEdit() {
 
         <label>
           Bid Amount:
-          <input name="bidAmount" type="number" value={form.bidAmount} onChange={handleChange} min="0" required />
+          <input name="bidAmount" type="number" value={form.bidAmount} onChange={handleChange} min="0" step="0.01" required />
         </label><br />
 
         <label>
           Fund:
-          <input name="fund" type="number" value={form.fund} onChange={handleChange} min="0" required />
+          <input name="fund" type="number" value={form.fund} onChange={handleChange} min="0" step="0.01" required />
         </label><br />
 
         <label>
@@ -121,7 +145,7 @@ function CampaignEdit() {
 
         <label>
           Radius (km):
-          <input name="radiusKm" type="number" value={form.radiusKm} onChange={handleChange} min="0" required />
+          <input name="radiusKm" type="number" value={form.radiusKm} onChange={handleChange} min="0" max="20015" step="1" required />
         </label><br />
 
         <label>
@@ -137,6 +161,7 @@ function CampaignEdit() {
             onChange={handleKeywordInputChange}
             onKeyDown={handleKeywordKeyDown}
             placeholder="Type and press Enter"
+            required={form.keywords.length === 0}
           />
           <datalist id="keyword-suggestions">
             {keywordSuggestions.map(k => (

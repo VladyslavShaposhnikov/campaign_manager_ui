@@ -5,7 +5,7 @@ function ProductCreate() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialSellerId = searchParams.get('sellerId');
-
+const [errorMessages, setErrorMessages] = useState([]);
   const [form, setForm] = useState({
     name: '',
     sellerId: initialSellerId || ''
@@ -31,6 +31,19 @@ function ProductCreate() {
       alert('Product created.');
       navigate(`/sellers/${form.sellerId}`);
     } else {
+      const errorData = await res.json();
+    
+  const extractedErrors = [];
+  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+      for (const field in errorData.errors) {
+        extractedErrors.push(...errorData.errors[field]);
+      }
+    }
+    setErrorMessages(extractedErrors);
+
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+  setErrorMessages(errorData.errors);
+}
       alert('Failed to create product.');
     }
   };
@@ -38,10 +51,21 @@ function ProductCreate() {
   return (
     <div>
       <h2>Create Product</h2>
+
+      {errorMessages.length > 0 && (
+  <div style={{ color: 'red' }}>
+    <ul>
+      {errorMessages.map((msg, index) => (
+        <li key={index}>{msg}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
       <form onSubmit={handleSubmit}>
         <label>
           Name:
-          <input name="name" value={form.name} onChange={handleChange} required />
+          <input name="name" value={form.name} onChange={handleChange} required placeholder='3-100 characters' minLength={3} maxLength={100} />
         </label><br />
 
         {!initialSellerId && (

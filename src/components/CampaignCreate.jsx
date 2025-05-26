@@ -10,6 +10,8 @@ function CampaignCreate() {
   const query = new URLSearchParams(location.search);
   const productIdFromQuery = query.get('productId');
   const productId = productIdFromQuery ? parseInt(productIdFromQuery, 10) : null;
+  const [errorMessages, setErrorMessages] = useState([]);
+
 
   const [products, setProducts] = useState([]);
   const [keywordInput, setKeywordInput] = useState('');
@@ -95,13 +97,36 @@ function CampaignCreate() {
       navigate(`/products/${form.productId}`);
       window.location.reload();
     } else {
-      alert('Failed to create campaign.');
+      const errorData = await res.json();
+    
+  const extractedErrors = [];
+  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+      for (const field in errorData.errors) {
+        extractedErrors.push(...errorData.errors[field]);
+      }
+    }
+    setErrorMessages(extractedErrors);
+
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+  setErrorMessages(errorData.errors);
+}
+       //alert('Failed to create campaign.');
     }
   };
 
   return (
     <div>
       <h2>Create New Campaign</h2>
+
+      {errorMessages.length > 0 && (
+  <div style={{ color: 'red' }}>
+    <ul>
+      {errorMessages.map((msg, index) => (
+        <li key={index}>{msg}</li>
+      ))}
+    </ul>
+  </div>
+)}
 
       {!productId && (
         <label>
@@ -130,12 +155,12 @@ function CampaignCreate() {
 
         <label>
           Bid Amount:
-          <input name="bidAmount" type="number" value={form.bidAmount} onChange={handleChange} required />
+          <input name="bidAmount" type="number" onChange={handleChange} required step="0.01"/>
         </label><br />
 
         <label>
           Fund:
-          <input name="fund" type="number" value={form.fund} onChange={handleChange} required />
+          <input name="fund" type="number" onChange={handleChange} required step="0.01" />
         </label><br />
 
         <label>

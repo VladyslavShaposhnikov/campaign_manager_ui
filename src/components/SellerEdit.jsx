@@ -6,7 +6,7 @@ function SellerEdit() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [emeraldBalance, setEmeraldBalance] = useState(0);
-
+const [errorMessages, setErrorMessages] = useState([]);
   useEffect(() => {
     // Load current seller data
     fetch(`/api/sellers/${id}`)
@@ -43,13 +43,37 @@ function SellerEdit() {
       navigate('/sellers');
       window.location.reload();
     } else {
-      alert('Failed to update seller.');
+      const errorData = await response.json();
+    
+  const extractedErrors = [];
+  if (typeof errorData.errors === 'object' && !Array.isArray(errorData.errors)) {
+      for (const field in errorData.errors) {
+        extractedErrors.push(...errorData.errors[field]);
+      }
+    }
+    setErrorMessages(extractedErrors);
+
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+  setErrorMessages(errorData.errors);
+}
+      //alert('Failed to update seller.');
     }
   };
 
   return (
     <div>
       <h2>Edit Seller</h2>
+
+{errorMessages.length > 0 && (
+  <div style={{ color: 'red' }}>
+    <ul>
+      {errorMessages.map((msg, index) => (
+        <li key={index}>{msg}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
       <form onSubmit={handleSubmit}>
         <label>
           Name:
@@ -57,6 +81,9 @@ function SellerEdit() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            placeholder='3-100 characters'
+            minLength={3}
+            maxLength={100}
           />
         </label>
         <br />

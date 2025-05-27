@@ -63,6 +63,17 @@ function SellerDetail() {
       <h2>{seller.name}</h2>
       <p>ID: {seller.id}</p>
 
+      <button
+        onClick={() => navigate(`/sellers/${id}/edit`)}
+        style={{ marginRight: '10px' }}
+      >
+        Edit {seller.name}
+      </button>
+
+      <button onClick={handleDeleteSeller}>
+        Delete {seller.name}
+      </button>
+
       <h3>Products by {seller.name}:</h3>
       {products.length === 0 ? (
         <p>No products found for this seller.</p>
@@ -86,18 +97,7 @@ function SellerDetail() {
           onClick={() => navigate(`/products/create?sellerId=${id}`)}
           style={{ marginRight: '10px' }}
         >
-          Add Product
-        </button>
-
-        <button
-          onClick={() => navigate(`/sellers/${id}/edit`)}
-          style={{ marginRight: '10px' }}
-        >
-          Edit {seller.name}
-        </button>
-
-        <button onClick={handleDeleteSeller}>
-          Delete Seller
+          Add New Product
         </button>
       </div>
     </div>

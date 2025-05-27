@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { SellersContext } from './SellersContext';
 
 const towns = ['Kraków', 'Warsaw', 'Gdańsk', 'Wrocław', 'Poznań'];
 const keywordSuggestions = ['eco', 'handmade', 'natural', 'gift', 'luxury', 'premium', 'exclusive', 'kids', 'toys', 'fun', 'colorful', 'home', 'decor', 'minimal', 'style', 'organic', 'vegan', 'wellness', 'care'];
@@ -11,6 +12,7 @@ function CampaignCreate() {
   const productIdFromQuery = query.get('productId');
   const productId = productIdFromQuery ? parseInt(productIdFromQuery, 10) : null;
   const [errorMessages, setErrorMessages] = useState([]);
+  const { reloadSellers } = useContext(SellersContext);
 
 
   const [products, setProducts] = useState([]);
@@ -94,8 +96,8 @@ function CampaignCreate() {
 
     if (res.ok) {
       alert('Campaign created.');
+      reloadSellers();
       navigate(`/products/${form.productId}`);
-      window.location.reload();
     } else {
       const errorData = await res.json();
 

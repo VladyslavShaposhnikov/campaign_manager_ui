@@ -24,7 +24,6 @@ function CampaignList() {
       setCampaigns(prev =>
         prev.map(c => c.id === campaignId ? { ...c, fund: updatedFund.fund } : c)
       );
-      window.location.reload();
       alert("Clicked");
     } else {
       alert("Transmission failed: Insufficient funds or error.");
@@ -36,8 +35,9 @@ function CampaignList() {
       <h1>Active Campaigns</h1>
       <ul>
         {campaigns.map(c => (
-          <li key={c.id}><Link to={`/campaigns/${c.id}`}>{c.name} </Link> - status:{c.status ? 'On' : 'Off'}
-            (for product: {c.productName} id: {c.productId}) - Fund: {c.fund}
+          <li key={c.id}><Link to={`/campaigns/${c.id}`}>{c.name}</Link> - (for product: {c.productName} with id: {c.productId})
+            - status: {c.status ? 'On' : 'Off'}, 1 cklick  costs {c.bidAmount}
+            - Fund: {c.fund}
             <button onClick={() => handleTransmit(c.id)}>Transmit</button>
           </li>
         ))}

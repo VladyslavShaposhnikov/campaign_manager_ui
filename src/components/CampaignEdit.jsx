@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { SellersContext } from './SellersContext';
 
 const towns = ['Kraków', 'Warsaw', 'Gdańsk', 'Wrocław', 'Poznań'];
 const keywordSuggestions = ['eco', 'handmade', 'natural', 'gift', 'luxury', 'premium', 'exclusive', 'kids', 'toys', 'fun', 'colorful', 'home', 'decor', 'minimal', 'style', 'organic', 'vegan', 'wellness', 'care'];
@@ -20,6 +21,7 @@ function CampaignEdit() {
   });
 
   const [keywordInput, setKeywordInput] = useState('');
+  const { reloadSellers } = useContext(SellersContext);
 
   useEffect(() => {
     fetch(`/api/campaigns/${id}`)
@@ -79,7 +81,7 @@ function CampaignEdit() {
     if (res.ok) {
       alert('Campaign updated.');
       navigate(`/campaigns/${id}`);
-      window.location.reload();
+      reloadSellers();
     } else {
       const errorData = await res.json();
 

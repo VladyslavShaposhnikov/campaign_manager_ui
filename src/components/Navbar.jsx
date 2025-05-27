@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import { SellersContext } from './SellersContext';
 
 function Navbar() {
   const [sellers, setSellers] = useState([]);
+  const { reloadFlag } = useContext(SellersContext);
 
   useEffect(() => {
     fetch('/api/sellers')
       .then(res => res.json())
       .then(setSellers)
       .catch(console.error);
-  }, []);
+  }, [reloadFlag]);
 
   const activeStyle = {
     fontWeight: 'bold',

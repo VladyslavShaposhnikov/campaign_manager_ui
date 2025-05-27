@@ -15,20 +15,18 @@ function CampaignList() {
   }, []);
 
   const handleTransmit = async (campaignId) => {
-    const res = await fetch(`/api/campaigns/transmit/${campaignId}`, {
-      method: 'POST',
-    });
+  const res = await fetch(`/api/campaigns/transmit/${campaignId}`, {
+    method: 'POST',
+  });
 
-    if (res.ok) {
-      const updatedFund = await res.json();
-      setCampaigns(prev =>
-        prev.map(c => c.id === campaignId ? { ...c, fund: updatedFund.fund } : c)
-      );
-      alert("Clicked");
-    } else {
-      alert("Transmission failed: Insufficient funds or error.");
-    }
-  };
+  if (res.ok) {
+    const refreshed = await fetch('/api/campaigns/active');
+    const data = await refreshed.json();
+    setCampaigns(data);
+  } else {
+    alert("Transmission failed: Insufficient funds or error.");
+  }
+};
 
   return (
     <div>
